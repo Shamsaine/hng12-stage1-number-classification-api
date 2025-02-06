@@ -1,8 +1,6 @@
-package main.java.com.numbers.classifier.numbers_classifier;
-
+package com.numbers.classifier.numbers_classifier;
 
 public class NumberModel {
-
     private int number;
 
     public NumberModel(int number) {
@@ -12,9 +10,4 @@ public class NumberModel {
     public int getNumber() {
         return number;
     }
-
-    public void setNumber(int number) {
-        
-    }
-    
 }

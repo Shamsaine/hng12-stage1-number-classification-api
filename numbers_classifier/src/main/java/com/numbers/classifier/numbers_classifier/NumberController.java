@@ -1,6 +1,11 @@
-package main.java.com.numbers.classifier.numbers_classifier;
+package com.numbers.classifier.numbers_classifier;
 
-import org.springframework.beans.factory.annotation.*;
+
+import com.numbers.classifier.numbers_classifier.service.NumberService;
+import com.numbers.classifier.numbers_classifier.service.NumberResponse;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -8,11 +13,20 @@ import org.springframework.web.bind.annotation.*;
 public class NumberController {
     
     @Autowired
-    private NumberModel numberModel;
-    
+    private NumberService numberService;
+
     @GetMapping("/classify-number/{number}")
-    public String classifyNumber(@PathVariable int number) {
-        // Your logic to classify the number goes here
-        return "The number " + number + " is classified as ...";
+    public ResponseEntity<?> classifyNumber(@PathVariable String number) {
+        try {
+            int num = Integer.parseInt(number); // Validate input
+            NumberResponse response = numberService.numberProperties(num);
+            return ResponseEntity.ok(response); // Return JSON response
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "number", number,
+                "error", true
+            ));
+        }
     }
+
 }
