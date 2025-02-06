@@ -1,34 +1,34 @@
-package com.numbers.classifier.numbers_classifier;
-
+package com.numbers.classifier.numbers_classifier.controller;
 
 import com.numbers.classifier.numbers_classifier.service.NumberService;
 import com.numbers.classifier.numbers_classifier.service.NumberResponse;
-import java.util.Map;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*") // ✅ Allow requests from anywhere
 public class NumberController {
-    
+
     @Autowired
     private NumberService numberService;
 
-    @GetMapping("/classify-number/{number}")
-    public ResponseEntity<?> classifyNumber(@PathVariable String number) {
+    // ✅ Change from @PathVariable to @RequestParam
+    @GetMapping("/classify-number")
+    public ResponseEntity<?> classifyNumber(@RequestParam(name = "number", required = true) String number) {
         try {
             int num = Integer.parseInt(number); // Validate input
             NumberResponse response = numberService.numberProperties(num);
-            return ResponseEntity.ok(response); // Return JSON response
+            return ResponseEntity.ok(response);
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(Map.of(
                 "number", number,
-                "error", true
+                "error", true,
+                "message", "Invalid input. Please enter a valid integer."
             ));
         }
     }
-
 }
