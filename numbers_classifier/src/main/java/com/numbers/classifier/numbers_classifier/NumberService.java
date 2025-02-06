@@ -1,14 +1,16 @@
 package com.numbers.classifier.numbers_classifier.service;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.util.concurrent.CompletableFuture;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class NumberService {
 
-    private final RestTemplate restTemplate = new RestTemplate(); // HTTP client for API calls
+    private final RestTemplate restTemplate = new RestTemplate(); // HTTP client
 
     public NumberResponse numberProperties(int number) {
         boolean isPrime = isPrime(number);
@@ -16,19 +18,22 @@ public class NumberService {
         boolean isArmstrong = isArmstrong(number);
         boolean isEven = (number % 2 == 0);
         int digitSum = getDigitSum(number);
-        String funFact = fetchFunFact(number);
 
-        // Construct response object
-        return new NumberResponse(number, isPrime, isPerfect, isArmstrong, isEven, digitSum, funFact);
+        // Call the fun fact API asynchronously
+        CompletableFuture<String> funFactFuture = fetchFunFactAsync(number);
+
+        // Construct response while the API fetches the fun fact
+        return new NumberResponse(number, isPrime, isPerfect, isArmstrong, isEven, digitSum, funFactFuture.join());
     }
 
-    private String fetchFunFact(int number) {
+    @Async
+    public CompletableFuture<String> fetchFunFactAsync(int number) {
         String url = "http://numbersapi.com/" + number + "/math?json";
         try {
             Map<String, Object> response = restTemplate.getForObject(url, HashMap.class);
-            return (response != null && response.containsKey("text")) ? response.get("text").toString() : "No fun fact found.";
+            return CompletableFuture.completedFuture(response != null ? response.get("text").toString() : "No fun fact found.");
         } catch (Exception e) {
-            return "Could not fetch fun fact. Error: " + e.getMessage();
+            return CompletableFuture.completedFuture("Could not fetch fun fact.");
         }
     }
 
