@@ -4,12 +4,14 @@ package com.numbers.classifier.numbers_classifier;
 import com.numbers.classifier.numbers_classifier.service.NumberService;
 import com.numbers.classifier.numbers_classifier.service.NumberResponse;
 import java.util.Map;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class NumberController {
     
     @Autowired
