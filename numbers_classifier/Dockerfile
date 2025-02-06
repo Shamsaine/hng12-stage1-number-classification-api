@@ -13,5 +13,8 @@ RUN apt-get update && apt-get install -y maven
 # Package the application
 RUN mvn clean package
 
+# Expose the port the application runs on
+EXPOSE 9090
+
 # Run the application
 CMD ["java", "-jar", "target/numbers_classifier-0.0.1-SNAPSHOT.jar"]
