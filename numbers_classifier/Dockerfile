@@ -14,4 +14,4 @@ RUN apt-get update && apt-get install -y maven
 RUN mvn clean package
 
 # Run the application
-CMD ["java", "-jar", "target/numbers_classifier.jar"]
+CMD ["java", "-jar", "target/numbers_classifier-0.0.1-SNAPSHOT.jar"]
