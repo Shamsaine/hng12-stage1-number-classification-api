@@ -1,3 +1,5 @@
+package com.numbers.classifier.numbers_classifier;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
@@ -6,7 +8,6 @@ import java.util.*;
 public class NumberService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final Map<Integer, String> funFactCache = new HashMap<>(); // ✅ Caching for fun facts
 
     public NumberResponse numberProperties(int number) {
         boolean isPrime = isPrime(number);
@@ -15,13 +16,11 @@ public class NumberService {
         boolean isEven = (number % 2 == 0);
         int digitSum = getDigitSum(number);
 
-        // ✅ Construct `properties` list
         List<String> properties = new ArrayList<>();
         if (isArmstrong) properties.add("armstrong");
         properties.add(isEven ? "even" : "odd");
 
-        // ✅ Fetch fun fact (with caching)
-        String funFact = funFactCache.computeIfAbsent(number, this::fetchFunFact);
+        String funFact = fetchFunFact(number);
 
         return new NumberResponse(number, isPrime, isPerfect, isArmstrong, isEven, digitSum, funFact, properties);
     }

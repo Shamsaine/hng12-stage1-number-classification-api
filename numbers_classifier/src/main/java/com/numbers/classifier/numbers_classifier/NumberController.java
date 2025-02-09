@@ -17,16 +17,16 @@ public class NumberController {
     private NumberService numberService;
 
     @GetMapping("/classify-number")
-    public ResponseEntity<?> classifyNumber(@RequestParam(name = "number", required = true) String number) {
-        if (number.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", true, "number", ""));
-        }
+    public ResponseEntity<?> classifyNumber(@RequestParam(name = "number") String number) {
         try {
             int num = Integer.parseInt(number);
             NumberResponse response = numberService.numberProperties(num);
             return ResponseEntity.ok(response);
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", true, "number", number));
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", true,
+                "number", number
+            ));
         }
     }
 }

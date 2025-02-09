@@ -19,16 +19,16 @@ public class NumberResponse {
         this.isArmstrong = isArmstrong;
         this.isEven = isEven;
         this.digitSum = digitSum;
-        this.funFact = (funFact != null) ? funFact : "No fun fact found."; 
+        this.funFact = (funFact != null) ? funFact : "No fun fact found.";
         this.properties = properties;
     }
 
     public int getNumber() { return number; }
-    public boolean getIsPrime() { return isPrime; } 
-    public boolean getIsPerfect() { return isPerfect; }  
-    public boolean getIsArmstrong() { return isArmstrong; }  
-    public boolean getIsEven() { return isEven; }  
-    public int getDigitSum() { return digitSum; }  
-    public String getFunFact() { return funFact; }  
+    public boolean getIsPrime() { return isPrime; }
+    public boolean getIsPerfect() { return isPerfect; }
+    public boolean getIsArmstrong() { return isArmstrong; }
+    public boolean getIsEven() { return isEven; }
+    public int getDigitSum() { return digitSum; }
+    public String getFunFact() { return funFact; }
     public List<String> getProperties() { return properties; }
 }
