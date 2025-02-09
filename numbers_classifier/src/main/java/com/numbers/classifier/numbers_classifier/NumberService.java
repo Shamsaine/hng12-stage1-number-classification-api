@@ -1,19 +1,12 @@
-package com.numbers.classifier.numbers_classifier;
-
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.util.concurrent.CompletableFuture;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-
+import java.util.*;
 
 @Service
 public class NumberService {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final Map<Integer, String> funFactCache = new HashMap<>(); // ✅ Caching for fun facts
 
     public NumberResponse numberProperties(int number) {
         boolean isPrime = isPrime(number);
@@ -22,24 +15,24 @@ public class NumberService {
         boolean isEven = (number % 2 == 0);
         int digitSum = getDigitSum(number);
 
+        // ✅ Construct `properties` list
         List<String> properties = new ArrayList<>();
         if (isArmstrong) properties.add("armstrong");
         properties.add(isEven ? "even" : "odd");
 
-        //Call Fun Fact API Asynchronously
-        CompletableFuture<String> funFactFuture = fetchFunFactAsync(number);
+        // ✅ Fetch fun fact (with caching)
+        String funFact = funFactCache.computeIfAbsent(number, this::fetchFunFact);
 
-        return new NumberResponse(number, isPrime, isPerfect, isArmstrong, isEven, digitSum, funFactFuture.join(), properties);
+        return new NumberResponse(number, isPrime, isPerfect, isArmstrong, isEven, digitSum, funFact, properties);
     }
 
-    @Async
-    public CompletableFuture<String> fetchFunFactAsync(int number) {
+    private String fetchFunFact(int number) {
         String url = "http://numbersapi.com/" + number + "/math?json";
         try {
             Map<String, Object> response = restTemplate.getForObject(url, HashMap.class);
-            return CompletableFuture.completedFuture(response != null && response.containsKey("text") ? response.get("text").toString() : "No fun fact found.");
+            return response != null && response.containsKey("text") ? response.get("text").toString() : "No fun fact found.";
         } catch (Exception e) {
-            return CompletableFuture.completedFuture("Could not fetch fun fact.");
+            return "Could not fetch fun fact.";
         }
     }
 
@@ -50,7 +43,7 @@ public class NumberService {
         }
         return true;
     }
-    
+
     private boolean isPerfect(int number) {
         int sum = 1;
         for (int i = 2; i <= number / 2; i++) {
@@ -58,7 +51,7 @@ public class NumberService {
         }
         return sum == number;
     }
-    
+
     private boolean isArmstrong(int number) {
         int original = number, sum = 0, digits = String.valueOf(number).length();
         while (number > 0) {
@@ -68,10 +61,10 @@ public class NumberService {
         }
         return sum == original;
     }
-    // ✅ Add the missing method
+
     private int getDigitSum(int number) {
         int sum = 0;
-        int n = Math.abs(number); // ✅ Handle negative numbers correctly
+        int n = Math.abs(number);
         while (n > 0) {
             sum += n % 10;
             n /= 10;
