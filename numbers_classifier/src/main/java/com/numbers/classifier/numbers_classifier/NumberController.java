@@ -1,7 +1,7 @@
-package com.numbers.classifier.numbers_classifier.controller;
+package com.numbers.classifier.numbers_classifier;
 
-import com.numbers.classifier.numbers_classifier.service.NumberService;
-import com.numbers.classifier.numbers_classifier.service.NumberResponse;
+import com.numbers.classifier.numbers_classifier.NumberService;
+import com.numbers.classifier.numbers_classifier.NumberResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +18,15 @@ public class NumberController {
 
     @GetMapping("/classify-number")
     public ResponseEntity<?> classifyNumber(@RequestParam(name = "number", required = true) String number) {
+        if (number.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", true, "number", ""));
+        }
         try {
             int num = Integer.parseInt(number);
             NumberResponse response = numberService.numberProperties(num);
             return ResponseEntity.ok(response);
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", true,
-                "number", number
-            ));
+            return ResponseEntity.badRequest().body(Map.of("error", true, "number", number));
         }
     }
 }
